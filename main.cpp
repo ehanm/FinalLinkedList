@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <iomanip>
 #include "Node.h"
 #include "Student.h"
 
@@ -191,7 +192,7 @@ void printstudent(Node* node, int checklist){
     cout << " ";
     cout << node->getStudent()->id;
     cout << " ";
-    cout << node->getStudent()->gpa;
+    cout << setprecision(2) << fixed << node->getStudent()->gpa;
 
     cout << endl;
     
