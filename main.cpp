@@ -6,8 +6,8 @@
 using namespace std;
 
 void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa);
-void printstudent(Node* node);
-void removestudent(Node* &node);
+void printstudent(Node* node, int checklist);
+void removestudent(Node* &head, Node* node, Node* previous, int id);
 void averagegpa(Node* node, float average, int totalnodes);
 
 
@@ -15,15 +15,18 @@ int main(){
 
   char input[10000];
   Node* head = NULL;
-  Student* newstudent;
-
+  
+  int checkstudent = 0;
+  
   float average;
   int totalnodes;
 
-  Node* previous = NULL;
+  Node* previous;
   Node* next;
 
   bool running = true;
+
+  int insertid;
 
   cout << "Welcome to LinkedList! This does the same stuff as StudentList, but with Nodes instead of vectors." << endl;
   
@@ -34,36 +37,43 @@ int main(){
 
     if (strcmp(input, "ADD") == 0){
 
-        char nameinput[1000];
-	int idinput;
-	float gpainput;
+      char nameinput[1000];
+      int idinput;
+      float gpainput;
 
-	cout << "Insert the student's name: " << endl;
-
-	cin >> nameinput;
-
-	cout << "Insert the student's ID number: " << endl;
-
-	cin >> idinput;
-
-	cout << "Insert the student's GPA; " << endl;
-
-	cin >> gpainput;
       
-	addstudent(previous, head, nameinput, idinput, gpainput);
+      cout << "Insert the student's name: " << endl;
+      
+      cin >> nameinput;
+      
+      cout << "Insert the student's ID number: " << endl;
+      
+      cin >> idinput;
+      
+      cout << "Insert the student's GPA; " << endl;
+      
+      cin >> gpainput;
+      
+      addstudent(previous, head, nameinput, idinput, gpainput);
             
     }
 
     else if (strcmp(input, "PRINT") == 0){
 
-      printstudent(head);
+      checkstudent = 0;
+      
+      printstudent(head, checkstudent);
       
     }
 
     else if (strcmp(input, "DELETE") == 0){
 
-      cout << "delete stuff" << endl;
-      
+      cout << "Enter the ID of the student you want to delete: " << endl;
+
+      cin >> insertid;
+
+      removestudent(head, head, previous, insertid);
+  
     }
 
     else if (strcmp(input, "QUIT") == 0){
@@ -104,14 +114,16 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
 
   else if (node->getNext() == NULL) {
 
+    cout << "it gets here first";
+    
     Node* newnode;
 
     Student* newstudent = new Student();
     
     newnode = new Node(newstudent);
 
-    if (previous == NULL){
-
+    if (previous == NULL && node->getStudent()->id > id){
+      
       newnode->setNext(node);
 
       node = newnode;
@@ -122,8 +134,10 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
       
     }
     
-    if (node->getStudent()->id > id){
+    else if (node->getStudent()->id > id){
 
+      cout << "gets here";
+      
       previous->setNext(newnode);
       
       newnode->setNext(node);
@@ -137,7 +151,7 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
     }
 
     else if (node->getStudent()->id < id){
-      
+
       node->setNext(newnode);
       
       strcpy(newnode->getStudent()->name, name);
@@ -149,8 +163,8 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
     return;
     
   }
-
-  else if (id > node->getStudent()->id) {
+  
+  else {
     
     Node* newnode = node->getNext();
 
@@ -160,9 +174,18 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
 
 }
 
-void printstudent(Node* node){
+void printstudent(Node* node, int checklist){
+
+  if (node == NULL && checklist == 0){
+
+    cout << "List is empty!" << endl;
+    return;
+    
+  }
   
   if (node != NULL) {
+
+    checklist++;
     
     cout << node->getStudent()->name;
     cout << " ";
@@ -172,20 +195,49 @@ void printstudent(Node* node){
 
     cout << endl;
     
-    printstudent(node->getNext());
+    printstudent(node->getNext(), checklist);
     
   }
   
   
 }
 
-void removestudent(Node* &node){
+void removestudent(Node* &head, Node* node, Node* previous, int id){
 
-  int insertid;
-  
-  cout << "Enter the ID of the student you want to delete: " << endl;
+  if (node != NULL) {
 
-  cin >> insertid;
+    if (node->getStudent()->id == id && head == node) {
+
+      head = node->getNext();
+      
+      node->~Node();
+      
+      return;
+
+    }
+    else if (node->getStudent()->id == id) {
+
+      previous->setNext(node->getNext());
+      
+      node->~Node();
+      
+      return;
+      
+    }
+
+    previous = node;
+
+    Node* nextnode = node->getNext();
+
+    removestudent(head, previous, nextnode, id);
+    
+  }
+
+  else if (node == NULL) {
+
+    cout << "Couldn't find that student!" << endl;
+
+  }
 
   
   
@@ -193,7 +245,14 @@ void removestudent(Node* &node){
 
 void averagegpa(Node* node, float average, int totalnodes){
 
-  if (node != NULL) {
+  if (node == NULL) {
+
+    cout << "Nothing to average!";
+
+    return;
+  }
+  
+  else if (node != NULL) {
     
     average += node->getStudent()->gpa;
 
