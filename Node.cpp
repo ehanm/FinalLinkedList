@@ -1,7 +1,10 @@
 #include "Node.h"
 #include "Student.h"
 using namespace std;
-Node::Node(Student* newStudent) {
+
+// the code for the nodes
+
+Node::Node(Student* newStudent) { 
   next = NULL;
   student = newStudent;
 }

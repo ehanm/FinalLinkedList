@@ -1,3 +1,7 @@
+// Made by Ehan Masud
+// Completed 2/2/2022 (Wow!)
+// Basically the same as StudentList, but instead made using nodes
+
 #include <iostream>
 #include <cstring>
 #include <iomanip>
@@ -6,13 +10,13 @@
 
 using namespace std;
 
-void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa);
+void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa); // prototypes
 void printstudent(Node* node, int checklist);
 void removestudent(Node* &head, Node* node, Node* previous, int id);
 void averagegpa(Node* node, float average, int totalnodes);
 
 
-int main(){
+int main(){ 
 
   char input[10000];
   Node* head = NULL;
@@ -31,12 +35,12 @@ int main(){
 
   cout << "Welcome to LinkedList! This does the same stuff as StudentList, but with Nodes instead of vectors." << endl;
   
-  while (running == true){
+  while (running == true){ // runs until user enters "QUIT"
     
     cout << "What would you like to do? (ADD, PRINT, DELETE, QUIT, AVERAGE)" << endl;
     cin >> input;
 
-    if (strcmp(input, "ADD") == 0){
+    if (strcmp(input, "ADD") == 0){ // gets all inputs, then passes it into the add function
 
       char nameinput[1000];
       int idinput;
@@ -59,7 +63,7 @@ int main(){
             
     }
 
-    else if (strcmp(input, "PRINT") == 0){
+    else if (strcmp(input, "PRINT") == 0) { // checkstudent just exists to make sure the list isn't empty
 
       checkstudent = 0;
       
@@ -67,7 +71,7 @@ int main(){
       
     }
 
-    else if (strcmp(input, "DELETE") == 0){
+    else if (strcmp(input, "DELETE") == 0) { // again, read in the input before passing it in
 
       cout << "Enter the ID of the student you want to delete: " << endl;
 
@@ -77,14 +81,14 @@ int main(){
   
     }
 
-    else if (strcmp(input, "QUIT") == 0){
+    else if (strcmp(input, "QUIT") == 0){ // quits
 
       running = false;
       break;
       
     }
 
-    else if (strcmp(input, "AVERAGE") == 0){
+    else if (strcmp(input, "AVERAGE") == 0){ // resets the average and totalnodes in case more nodes are added
 
       average = 0;
       totalnodes = 0;
@@ -101,7 +105,7 @@ int main(){
 
 void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
   
-  if (node == NULL){
+  if (node == NULL){ // if no nodes exist, make the first one
 
     node = new Node(new Student());
     
@@ -113,7 +117,7 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
     
   }
 
-  else if (node->getNext() == NULL) {
+  else if (node->getNext() == NULL) { // if recursion lead to the end of the list, check through the if statements to find where to put the new node
 
     cout << "it gets here first";
     
@@ -123,7 +127,7 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
     
     newnode = new Node(newstudent);
 
-    if (previous == NULL && node->getStudent()->id > id){
+    if (previous == NULL && node->getStudent()->id > id){ // if the list is only one node large, move new node to beginning
       
       newnode->setNext(node);
 
@@ -135,9 +139,7 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
       
     }
     
-    else if (node->getStudent()->id > id){
-
-      cout << "gets here";
+    else if (node->getStudent()->id > id){ // if the last node has a larger id than the new node, move it directly behind.
       
       previous->setNext(newnode);
       
@@ -151,7 +153,7 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
 
     }
 
-    else if (node->getStudent()->id < id){
+    else if (node->getStudent()->id < id){ // if the new node has a larger id than the last node, move it in front.
 
       node->setNext(newnode);
       
@@ -165,7 +167,7 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
     
   }
   
-  else {
+  else { // if it didn't fit any of the cases, recurse again
     
     Node* newnode = node->getNext();
 
@@ -175,16 +177,16 @@ void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
 
 }
 
-void printstudent(Node* node, int checklist){
+void printstudent(Node* node, int checklist){ // prints out the students
 
-  if (node == NULL && checklist == 0){
+  if (node == NULL && checklist == 0){ // if list is empty
 
     cout << "List is empty!" << endl;
     return;
     
   }
   
-  if (node != NULL) {
+  if (node != NULL) { // if the list is not empty, also changes checklist just to make sure it doesn't run the first if statement
 
     checklist++;
     
@@ -205,9 +207,9 @@ void printstudent(Node* node, int checklist){
 
 void removestudent(Node* &head, Node* node, Node* previous, int id){
 
-  if (node != NULL) {
+  if (node != NULL) { // only deletes if the node exists
 
-    if (node->getStudent()->id == id && head == node) {
+    if (node->getStudent()->id == id && head == node) { // if head is being deleted
 
       head = node->getNext();
       
@@ -216,7 +218,7 @@ void removestudent(Node* &head, Node* node, Node* previous, int id){
       return;
 
     }
-    else if (node->getStudent()->id == id) {
+    else if (node->getStudent()->id == id) { // if any other node that's being recursed through matches
 
       previous->setNext(node->getNext());
       
@@ -226,6 +228,8 @@ void removestudent(Node* &head, Node* node, Node* previous, int id){
       
     }
 
+    // if no if statements have been reached, keep recursing
+    
     previous = node;
 
     Node* nextnode = node->getNext();
@@ -234,7 +238,7 @@ void removestudent(Node* &head, Node* node, Node* previous, int id){
     
   }
 
-  else if (node == NULL) {
+  else if (node == NULL) { // if at the end of the list and no id found, student doesn't exist
 
     cout << "Couldn't find that student!" << endl;
 
@@ -246,18 +250,18 @@ void removestudent(Node* &head, Node* node, Node* previous, int id){
 
 void averagegpa(Node* node, float average, int totalnodes){
 
-  if (node == NULL) {
+  if (node == NULL) { // if there are no nodes, nothing to average
 
     cout << "Nothing to average!";
 
     return;
   }
   
-  else if (node != NULL) {
+  else if (node != NULL) { // goes through list, adds all gpas to a specific float
     
     average += node->getStudent()->gpa;
 
-    totalnodes++;
+    totalnodes++; // goes up every time it passes a node
     
     Node* nextnode = node->getNext();
     
@@ -267,9 +271,9 @@ void averagegpa(Node* node, float average, int totalnodes){
 
   else {
     
-    average = average / totalnodes;
+    average = average / totalnodes; // finds average
 
-    cout << "The average of the Students' GPA is: " << average << endl;
+    cout << "The average of the Students' GPA is: " << average << endl; // prints average
 
   }
 }

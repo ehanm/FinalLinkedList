@@ -6,7 +6,7 @@
 
 using namespace std;
 
-class Student {
+class Student { // setup for all information about the Student
 
  public:
   
