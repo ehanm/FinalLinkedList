@@ -5,15 +5,23 @@
 
 using namespace std;
 
-void addstudent(Node* &node);
+void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa);
 void printstudent(Node* node);
 void removestudent(Node* &node);
+void averagegpa(Node* node, float average, int totalnodes);
+
 
 int main(){
 
   char input[10000];
   Node* head = NULL;
   Student* newstudent;
+
+  float average;
+  int totalnodes;
+
+  Node* previous = NULL;
+  Node* next;
 
   bool running = true;
 
@@ -24,9 +32,25 @@ int main(){
     cout << "What would you like to do? (ADD, PRINT, DELETE, QUIT, AVERAGE)" << endl;
     cin >> input;
 
-    if (strcmp(input, "ADD") == 0){      
+    if (strcmp(input, "ADD") == 0){
+
+        char nameinput[1000];
+	int idinput;
+	float gpainput;
+
+	cout << "Insert the student's name: " << endl;
+
+	cin >> nameinput;
+
+	cout << "Insert the student's ID number: " << endl;
+
+	cin >> idinput;
+
+	cout << "Insert the student's GPA; " << endl;
+
+	cin >> gpainput;
       
-      addstudent(head);
+	addstudent(previous, head, nameinput, idinput, gpainput);
             
     }
 
@@ -51,7 +75,10 @@ int main(){
 
     else if (strcmp(input, "AVERAGE") == 0){
 
-      cout << "Averages" << endl;
+      average = 0;
+      totalnodes = 0;
+
+      averagegpa(head, average, totalnodes);
 
     }
     
@@ -61,39 +88,18 @@ int main(){
   return 0;
 }
 
-void addstudent(Node* &node){
-
-  char nameinput[1000];
-  int idinput;
-  float gpainput;
+void addstudent(Node* &previous, Node* &node, char name[], int id, float gpa){
   
   if (node == NULL){
+
     node = new Node(new Student());
     
-    cout << "Insert the student's name: " << endl;
+    strcpy(node->getStudent()->name, name);
+    node->getStudent()->id = id;
+    node->getStudent()->gpa = gpa;
 
-    cin >> nameinput;
+    return;
     
-    cout << "Insert the student's ID number: " << endl;
-
-    cin >> idinput;
-
-    cout << "Insert the student's GPA; " << endl;
-    
-    cin >> gpainput;
-
-    strcpy(node->getStudent()->name, nameinput);
-    node->getStudent()->id = idinput;
-    node->getStudent()->gpa = gpainput;
-    
-  }
-
-  else if (node->getNext() != NULL) {
-
-    Node* newnode = node->getNext();
-    
-    addstudent(newnode);
-
   }
 
   else if (node->getNext() == NULL) {
@@ -104,25 +110,52 @@ void addstudent(Node* &node){
     
     newnode = new Node(newstudent);
 
-    node->setNext(newnode);
+    if (previous == NULL){
+
+      newnode->setNext(node);
+
+      node = newnode;
+
+      strcpy(newnode->getStudent()->name, name);
+      newnode->getStudent()->id = id;
+      newnode->getStudent()->gpa = gpa;
+      
+    }
     
-    cout << "insert the student's name: " << endl;
+    if (node->getStudent()->id > id){
 
-    cin >> nameinput;
+      previous->setNext(newnode);
+      
+      newnode->setNext(node);
 
-    cout << "Insert the student's ID number: " << endl;
+      node = newnode;
+      
+      strcpy(newnode->getStudent()->name, name);
+      newnode->getStudent()->id = id;
+      newnode->getStudent()->gpa = gpa;
 
-    cin >> idinput;
+    }
 
-    cout << "Insert the student's gpa: " << endl;
+    else if (node->getStudent()->id < id){
+      
+      node->setNext(newnode);
+      
+      strcpy(newnode->getStudent()->name, name);
+      newnode->getStudent()->id = id;
+      newnode->getStudent()->gpa = gpa;
+      
+    }
 
-    cin >> gpainput;
-
-    strcpy(newnode->getStudent()->name, nameinput);
-    newnode->getStudent()->id = idinput;
-    newnode->getStudent()->gpa = gpainput;
+    return;
     
+  }
 
+  else if (id > node->getStudent()->id) {
+    
+    Node* newnode = node->getNext();
+
+    addstudent(node, newnode, name, id, gpa);
+    
   }
 
 }
@@ -154,4 +187,29 @@ void removestudent(Node* &node){
 
   cin >> insertid;
 
+  
+  
+}
+
+void averagegpa(Node* node, float average, int totalnodes){
+
+  if (node != NULL) {
+    
+    average += node->getStudent()->gpa;
+
+    totalnodes++;
+    
+    Node* nextnode = node->getNext();
+    
+    averagegpa(nextnode, average, totalnodes);
+    
+  }
+
+  else {
+    
+    average = average / totalnodes;
+
+    cout << "The average of the Students' GPA is: " << average << endl;
+
+  }
 }
