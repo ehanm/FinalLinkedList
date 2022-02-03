@@ -273,7 +273,7 @@ void averagegpa(Node* node, float average, int totalnodes){
     
     average = average / totalnodes; // finds average
 
-    cout << "The average of the Students' GPA is: " << average << endl; // prints average
+    cout << "The average of the Students' GPA is: " << setprecision(2) << fixed << average << endl; // prints average
 
   }
 }
